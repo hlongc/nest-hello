@@ -9,6 +9,8 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  OnModuleInit,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { PersonService } from './person.service';
@@ -16,7 +18,7 @@ import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 
 @Controller('person')
-export class PersonController {
+export class PersonController implements OnModuleInit, OnApplicationBootstrap {
   constructor(private readonly personService: PersonService) {}
 
   @Post()
@@ -74,5 +76,13 @@ export class PersonController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.personService.remove(+id);
+  }
+
+  onModuleInit() {
+    console.log('person controller onMoudleInit');
+  }
+
+  onApplicationBootstrap() {
+    console.log('person controller onApplicationBootstrap');
   }
 }

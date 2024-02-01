@@ -1,10 +1,26 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  OnApplicationBootstrap,
+  OnModuleDestroy,
+  BeforeApplicationShutdown,
+  OnApplicationShutdown,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { CatService } from './cat/cat.service';
 import { OtherService } from './other/other.service';
 
 @Controller()
-export class AppController {
+export class AppController
+  implements
+    OnModuleInit,
+    OnApplicationBootstrap,
+    OnModuleDestroy,
+    BeforeApplicationShutdown,
+    OnApplicationShutdown
+{
   // constructor(private readonly appService: AppService) {}
 
   // 属性注入和构造器注入是一样的效果
@@ -36,5 +52,25 @@ export class AppController {
       JSON.stringify(this.user) +
       this.otherService.say()
     );
+  }
+
+  onModuleInit() {
+    console.log('app controller onMoudleInit');
+  }
+
+  onApplicationBootstrap() {
+    console.log('app controller onApplicationBootstrap');
+  }
+
+  onModuleDestroy() {
+    console.log('app contoller onModuleDestroy');
+  }
+
+  beforeApplicationShutdown(signal?: string) {
+    console.log('app controller beforeApplicationShutdown', signal);
+  }
+
+  onApplicationShutdown(signal?: string) {
+    console.log('app controller onApplicationShutdown', signal);
   }
 }

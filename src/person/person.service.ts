@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  OnApplicationBootstrap,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 
 @Injectable()
-export class PersonService {
+export class PersonService implements OnModuleInit, OnApplicationBootstrap {
   create(createPersonDto: CreatePersonDto) {
     return 'This action adds a new person';
   }
@@ -22,5 +26,13 @@ export class PersonService {
 
   remove(id: number) {
     return `This action removes a #${id} person`;
+  }
+
+  onModuleInit() {
+    console.log('person service onMoudleInit');
+  }
+
+  onApplicationBootstrap() {
+    console.log('person service onApplicationBootstrap');
   }
 }
