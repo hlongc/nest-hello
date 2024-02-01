@@ -13,7 +13,8 @@ async function bootstrap() {
     next();
     console.log('after');
   });
-
+  // 全局路由守卫
+  // app.useGlobalGuards(new LoginGuard());
   await app.listen(3000);
 }
 bootstrap();

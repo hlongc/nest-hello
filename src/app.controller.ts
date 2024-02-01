@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { LoginGuard } from './login.guard';
 
 @Controller()
 export class AppController {
@@ -13,5 +14,11 @@ export class AppController {
   @Get('hello')
   hello() {
     return 'hello';
+  }
+
+  @Get('world')
+  @UseGuards(LoginGuard)
+  world() {
+    return 'world';
   }
 }
