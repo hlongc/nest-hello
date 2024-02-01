@@ -1,6 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CatService } from './cat/cat.service';
+import { OtherService } from './other/other.service';
 
 @Controller()
 export class AppController {
@@ -22,6 +23,9 @@ export class AppController {
   @Inject('mix')
   private readonly mix: { name: string; info: string };
 
+  @Inject(OtherService)
+  private readonly otherService: OtherService;
+
   @Get()
   getHello(): string {
     console.log(this.info);
@@ -29,7 +33,8 @@ export class AppController {
       this.appService.getHello() +
       this.catService.getName() +
       ' ' +
-      JSON.stringify(this.user)
+      JSON.stringify(this.user) +
+      this.otherService.say()
     );
   }
 }
