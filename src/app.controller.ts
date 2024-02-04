@@ -1,42 +1,46 @@
 import {
+  Body,
   Controller,
   Get,
-  Query,
-  UseFilters,
+  Headers,
+  Post,
+  Session,
+  SetMetadata,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { LoginGuard } from './login.guard';
-import { TimeInterceptor } from './time.interceptor';
-import { ValidatePipe } from './validate.pipe';
-import { TestFilter } from './test.filter';
+import { UserDto } from './app.dto';
+import { UserGuard } from './user.guard';
+import { TimerInterceptor } from './timer.interceptor';
 
 @Controller()
+@UseGuards(UserGuard)
+@UseInterceptors(TimerInterceptor)
+@SetMetadata('roles', 'controller')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
+  @SetMetadata('roles', 'handler')
+  getHello(@Headers('Host') host: string): string {
+    console.log('Host:', host);
     return this.appService.getHello();
   }
 
-  @Get('hello')
-  @UseInterceptors(TimeInterceptor)
-  hello() {
-    console.log('hello...');
-    return 'hello';
+  @Post('register')
+  register(@Body() body: UserDto): string {
+    console.log('Body:', body);
+    return '注册成功';
   }
 
-  @Get('world')
-  @UseGuards(LoginGuard)
-  world() {
-    return 'world';
-  }
-
-  @Get('pipe')
-  @UseFilters(TestFilter)
-  num(@Query('num', ValidatePipe) num: number) {
-    return num + 1;
+  @Get('session')
+  session(@Session() session) {
+    if (!session.count) {
+      session.count = 0;
+    }
+    session.count++;
+    console.log('Session:', session);
+    return session.count;
   }
 }

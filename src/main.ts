@@ -1,20 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
+import * as session from 'express-session';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  // 静态资源预览
-  app.useStaticAssets('public', { prefix: '/static' });
-  // 全局中间件
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log('before', req.url);
-    next();
-    console.log('after');
-  });
-  // 全局路由守卫
-  // app.useGlobalGuards(new LoginGuard());
+  const app = await NestFactory.create(AppModule);
+  app.use(session({ secret: 'hlongc', cookie: { maxAge: 60000 } }));
   await app.listen(3000);
 }
 bootstrap();
