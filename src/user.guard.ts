@@ -15,11 +15,8 @@ export class UserGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const classMetaData = this.reflector.get('roles', context.getClass());
-    const handlerMetaData = this.reflector.get('roles', context.getHandler());
-    console.log('guard classMetaData:', classMetaData);
-    console.log('guard handlerMetaData:', handlerMetaData);
-
+    const custom = this.reflector.get<string>('custom', context.getHandler());
+    console.log('custom', custom);
     return true;
   }
 }
