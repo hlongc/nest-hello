@@ -1,11 +1,24 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BbbModule } from './bbb/bbb.module';
+import { TimerInterceptor } from './timer.interceptor';
+import { MapInterceptor } from './map.interceptor';
 
 @Module({
-  imports: [BbbModule.register({ a: 1, b: 2 })],
+  imports: [],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      // 全局使用拦截器
+      provide: APP_INTERCEPTOR,
+      useClass: TimerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MapInterceptor,
+    },
+  ],
 })
 export class AppModule {}
