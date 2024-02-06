@@ -10,8 +10,13 @@ import {
   Param,
   ParseEnumPipe,
   DefaultValuePipe,
+  Post,
+  Body,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AppService } from './app.service';
+import { InfoDto, UserDto } from './app.dto';
+import { MyValidatePipe } from './validate.pipe';
 
 enum LevelEnum {
   A = '1',
@@ -77,5 +82,20 @@ export class AppController {
     @Query('name', new DefaultValuePipe(`I'm default value`)) name: string,
   ): string {
     return name;
+  }
+
+  @Post('check')
+  check(@Body(new ValidationPipe()) user: UserDto) {
+    return user;
+  }
+
+  @Post('validate')
+  validate(@Body(MyValidatePipe) user: UserDto) {
+    return user;
+  }
+
+  @Post('add/info')
+  addInfo(@Body(new ValidationPipe()) info: InfoDto) {
+    return info;
   }
 }

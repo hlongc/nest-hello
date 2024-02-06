@@ -1,0 +1,1 @@
+export const VALIDATE_OPTIONS = 'VALIDATE_OPTIONS';
