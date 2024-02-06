@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>单个文件上传</title>
+  </head>
+  <body>
+    <form
+      action="/multiple"
+      method="post"
+      enctype="multipart/form-data"
+      onsubmit="(e) => e.preventDefault()"
+      accept-charset="UTF-8"
+    >
+      <input name="name" placeholder="姓名" />
+      <input name="hobby" placeholder="爱好" />
+      <input type="file" id="file" name="file" multiple />
+      <button type="submit">提交</button>
+    </form>
+  </body>
+</html>
