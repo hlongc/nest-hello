@@ -1,31 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="./axios.min.js"></script>
-    <script src="./qs.min.js"></script>
+    <script src="https://cdn.staticfile.net/axios/1.6.5/axios.min.js"></script>
   </head>
   <body>
-    <h2>Ronnie</h2>
-    <input type="file" id="upload" multiple />
+    <input type="file" id="upload" />
+    <button id="submit">submit</button>
     <script>
-      const uoload = document.querySelector('#upload');
+      const btn = document.getElementById('submit');
+      const upload = document.getElementById('upload');
+      // 每个分片20kb
+      const chunkSize = 20 * 1024;
 
-      async function onchange() {
-        const fd = new FormData();
-        fd.set('name', 'ronnie');
-        fd.set('age', 28);
-        fd.append('file1', uoload.files[0]);
-        fd.append('file2', uoload.files[1]);
-        const ret = await axios.post('/person/formdata', fd, {
-          headers: { 'conent-type': 'multipart/form-data' },
+      async function onclick() {
+        const file = upload.files?.[0];
+        if (!file) return;
+        const size = file.size;
+        const chunks = [];
+        let start = 0;
+        while (start < size) {
+          chunks.push(file.slice(start, start + chunkSize));
+          start += chunkSize;
+        }
+        const hash = Math.random().toString(16).slice(2, 8);
+        // 分片上传
+        await Promise.all(
+          chunks.map((chunk, index) => {
+            const fd = new FormData();
+            const separator = '*-*';
+            const name = [file.name, hash, index].join(separator);
+            fd.set('name', name);
+            fd.append('file', chunk);
+            return axios.post('/upload', fd);
+          }),
+        );
+
+        // 合并分片
+        await axios.post('/merge', {
+          name: file.name,
+          hash,
         });
-        console.log(ret.data);
       }
 
-      uoload.onchange = onchange;
+      btn.onclick = onclick;
     </script>
   </body>
 </html>
