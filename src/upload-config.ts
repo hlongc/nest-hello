@@ -22,6 +22,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter: multer.Options['fileFilter'] = (req, file, callback) => {
+  // 解决内部编码错误导致的中文名文件名称乱码问题
   file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
   callback(null, true);
 };

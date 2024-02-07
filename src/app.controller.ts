@@ -14,7 +14,7 @@ import {
   FileInterceptor,
   FilesInterceptor,
 } from '@nestjs/platform-express';
-import { storage } from './upload-config';
+import { storage, fileFilter } from './upload-config';
 
 @Controller()
 export class AppController {
@@ -26,7 +26,7 @@ export class AppController {
   }
 
   @Post('single')
-  @UseInterceptors(FileInterceptor('file', { storage }))
+  @UseInterceptors(FileInterceptor('file', { storage, fileFilter }))
   single(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
     console.log('single', file);
     console.log(body);
@@ -34,7 +34,7 @@ export class AppController {
   }
 
   @Post('multiple')
-  @UseInterceptors(FilesInterceptor('file', 2, { dest: 'uploads' }))
+  @UseInterceptors(FilesInterceptor('file', 2, { dest: 'uploads', fileFilter }))
   multiple(@UploadedFiles() file: Express.Multer.File[], @Body() body: any) {
     console.log(file);
     console.log(body);
@@ -48,7 +48,7 @@ export class AppController {
         { name: 'file', maxCount: 2 },
         { name: 'file1', maxCount: 3 },
       ],
-      { dest: 'uploads' },
+      { dest: 'uploads', fileFilter },
     ),
   )
   multipleField(
@@ -65,7 +65,7 @@ export class AppController {
   }
 
   @Post('any')
-  @UseInterceptors(AnyFilesInterceptor({ storage }))
+  @UseInterceptors(AnyFilesInterceptor({ storage, fileFilter }))
   any(@UploadedFiles() files: Express.Multer.File[], @Body() body: any) {
     console.log(files);
     console.log(body);
