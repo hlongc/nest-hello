@@ -1,3 +1,4 @@
+import { FileValidator } from '@nestjs/common';
 import * as multer from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -27,4 +28,21 @@ const fileFilter: multer.Options['fileFilter'] = (req, file, callback) => {
   callback(null, true);
 };
 
-export { storage, fileFilter };
+class MyFileValidator extends FileValidator {
+  protected validationOptions: Record<string, any>;
+  private size: number;
+
+  constructor(options) {
+    super(options);
+    this.size = options.size ?? 10;
+  }
+  isValid(file?: Express.Multer.File): boolean | Promise<boolean> {
+    return file.size < this.size * 1024;
+  }
+
+  buildErrorMessage(file: Express.Multer.File): string {
+    return `图片 ${file.originalname} 大小不能超过 ${this.size}KB`;
+  }
+}
+
+export { storage, fileFilter, MyFileValidator };

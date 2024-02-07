@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -14,7 +17,7 @@ import {
   FileInterceptor,
   FilesInterceptor,
 } from '@nestjs/platform-express';
-import { storage, fileFilter } from './upload-config';
+import { storage, fileFilter, MyFileValidator } from './upload-config';
 
 @Controller()
 export class AppController {
@@ -68,6 +71,29 @@ export class AppController {
   @UseInterceptors(AnyFilesInterceptor({ storage, fileFilter }))
   any(@UploadedFiles() files: Express.Multer.File[], @Body() body: any) {
     console.log(files);
+    console.log(body);
+    return '成功上传文件';
+  }
+
+  @Post('validate')
+  @UseInterceptors(FileInterceptor('file', { storage, fileFilter }))
+  validate(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: 'image/*' }),
+          // new MaxFileSizeValidator({
+          //   maxSize: 10 * 1024,
+          //   message: '图片最大为10k',
+          // }),
+          new MyFileValidator({ size: 100 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Body() body: any,
+  ) {
+    console.log('validate', file);
     console.log(body);
     return '成功上传文件';
   }
